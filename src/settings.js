@@ -12,5 +12,5 @@ module.exports= {
     'EMAIL_NAME': '',
     'EMAIL_FROM': 'from@example.com',
     'MONGODB_URL': 'mongodb+srv://firebase2420:th4LP39FdjC3Bd6Y@cluster0.leymei6.mongodb.net/PROJECT_SCHOOL',
-    "ENCRYPTION_SECRET":'SHAZZADHOSSEN!@#$%^&*()'
+    "SECRET":'d163877362df46ea47aa37b971bca7175508bf049784e370032d109f0bd2c55e:412a859df076fe70393408d340d649a3'
   };
