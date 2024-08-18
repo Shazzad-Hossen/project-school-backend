@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const settings= require('../settings');
-const secretKey = settings.ENCRYPTION_SECRET;
+// const secretKey = settings.ENCRYPTION_SECRET;
 
 
 // Encrypt the password
