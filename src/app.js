@@ -6,6 +6,7 @@ const http= require('node:http');
 const services= require('./services/index');
 const morgan = require('morgan');
 const crypto = require('./utils/crypto');
+const cookieParser = require('cookie-parser');
 
 class App {
     constructor({ deps } = {}){
@@ -26,6 +27,7 @@ class App {
               credentials: true
             }));
         this.express.use(express.json())
+        this.express.use(cookieParser())
        
         this.express.use('/api', this.router);
         this.server= http.createServer(this.express);

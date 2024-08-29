@@ -3,12 +3,11 @@ const { model, Schema } = require("mongoose");
 
 const schema = new Schema({
   email: { type: String, required: true, unique:true },
-  name: { type: String },
-  username: { type: String, required: true, unique:true },
+  name: { type: String, required:true },
   password: { type: String, required: true },
   image:{ type: String },
   uid:{ type: String },
-  nid:{ type: String, unique:true, required:true },
+  nid:{ type: String, unique:true},
   npi:{ type: String },
  
 }, { timestamps: true });
