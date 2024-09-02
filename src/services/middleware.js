@@ -12,4 +12,21 @@ module.exports.auth= async(req,res,next)=>{
     if(!user)return res.status(401).send({ message: 'Unauthorized' });
     else req.user=user;
     next();
-}
+};
+
+module.exports.checkRole = (roles = []) => {
+    return (req, res, next) => {
+        (async () => {
+            try {
+                if (roles.includes(req.user.role)) {
+                    return next();
+                } else {
+                    return res.status(401).send({ message: 'Unauthorized' });
+                }
+            } catch (error) {
+                console.log(error);
+                return res.status(401).send({ message: 'Unauthorized' });
+            }
+        })();
+    };
+};

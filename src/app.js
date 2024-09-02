@@ -7,6 +7,9 @@ const services= require('./services/index');
 const morgan = require('morgan');
 const crypto = require('./utils/crypto');
 const cookieParser = require('cookie-parser');
+const form = require('express-form-data');
+const { fileUp } = require('./controllers/fileUp');
+
 
 class App {
     constructor({ deps } = {}){
@@ -14,6 +17,7 @@ class App {
         this.config=settings;
         this.router = new express.Router();
         this.crypto= crypto;
+        this.fileUp=fileUp;
         if (deps) {
             this.depPromises = deps.map(({ method, args }) => new Promise((resolve, reject) => method(...args).then(r => resolve(r)).catch((err) => reject(err))));
           }  
@@ -26,8 +30,9 @@ class App {
               origin: this.config.origin,
               credentials: true
             }));
-        this.express.use(express.json())
-        this.express.use(cookieParser())
+        this.express.use(express.json());
+        this.express.use(cookieParser());
+        this.express.use(form.parse());
        
         this.express.use('/api', this.router);
         this.server= http.createServer(this.express);
@@ -41,7 +46,8 @@ class App {
           ...this.express,
           route: this.router,
           crypto:this.crypto,
-          settings: this.config
+          settings: this.config,
+          fileUp:this.fileUp
         });
       }
 

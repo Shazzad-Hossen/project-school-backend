@@ -9,6 +9,7 @@ const schema = new Schema({
   uid:{ type: String },
   nid:{ type: String, unique:true},
   npi:{ type: String },
+  role: { type: String, enum:['user', 'admin']},
  
 }, { timestamps: true });
 

@@ -11,7 +11,7 @@ module.exports.create = ({crypto})=>async(req,res)=>{
     if(isFound) return res.status(409).send({message:'User already exist with this email address'});
     const user = await User.create(req.body);
     if(!user) return res.status(500).send({message:'Something went wrong'});
-    return res.status(201).send(user);
+    return res.status(201).send({message:'Sign up successfull', data: user});
         
     } catch (error) {
         console.log(error);
@@ -42,7 +42,7 @@ module.exports.login=({crypto})=>async(req,res)=>{
           });
 
 
-        return res.status(200).send(user);
+        return res.status(200).send({message:"Sign in successful", data:user});
 
         
     } catch (error) {
