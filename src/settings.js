@@ -3,7 +3,8 @@ module.exports= {
     'port': process.env.PORT || 4000,
     'origin': [
       '*',
-      'http://localhost:5173'
+      'http://localhost:5173',
+      'https://amazing-medovik-e4b89c.netlify.app/'
     ],
     'useHTTP2': false,
     'SMTP_HOST': '',
