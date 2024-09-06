@@ -8,8 +8,10 @@ const schema = new Schema({
   image:{ type: String },
   uid:{ type: String },
   nid:{ type: String, unique:true},
-  npi:{ type: String },
-  role: { type: String, enum:['user', 'admin']},
+  nidFront:{ type: String },
+  nidBack:{ type: String },
+  role: { type: String, enum:['user', 'admin'], default:'user'},
+  verified:{type:Boolean, default: false}
  
 }, { timestamps: true });
 

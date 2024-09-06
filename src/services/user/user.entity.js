@@ -29,7 +29,7 @@ module.exports.login=({crypto})=>async(req,res)=>{
         }
         
         const password = crypto.decrypt(user.password);
-        if(password!==req.body.password) return res.status(401).send({message:'Invalid password'});
+        if(password!==req.body.password) return res.status(400).send({message:'Invalid password'});
         const token = crypto.encrypt({id: user._id});
         //setup cookie here
         res.cookie(SETTINGS.COOKIE_NAME, token, {
@@ -63,3 +63,59 @@ module.exports.me=({crypto})=>async(req,res)=>{
         
     }
 }
+
+module.exports.updateOwn=({fileUp,crypto})=>async(req,res)=>{
+    try {
+        if(req.params.id!==req.user._id.toString()) return res.status(401).send({message: 'Unauthorized'});
+        if(req.body.data) req.body=JSON.parse(req.body.data);
+        if(req.files.file) req.body.image= await fileUp(req.files.file.path);
+        if(req.files.nidFront) {
+            req.body.nidFront= await fileUp(req.files.nidFront.path);
+        }
+        if(req.files.nidBack) {
+            req.body.nidBack= await fileUp(req.files.nidBack.path);
+        }
+        if(req.body.currentPassword && req.body.newPassword){
+            const password = crypto.decrypt(req.user.password);
+            if(password===req.body.currentPassword) {
+                req.body.password=crypto.encrypt(req.body.newPassword);
+                delete req.body.currentPassword;
+             delete req.body.newPassword;
+            }
+            else return res.status(400).send({message:'Wrong password'})
+
+        }
+        else {
+            delete req.body.password;
+            delete req.body.currentPassword;
+            delete req.body.newPassword;
+        }
+        Object.keys(req.body).forEach(key=>req.user[key]=req.body[key]);
+        req.user.save();
+        return res.status(200).send({data:req.user});
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({message:'Something went wrong'});
+        
+    }
+}
+
+
+module.exports.logout = () => async (req, res) => {
+    try {
+      res.clearCookie(SETTINGS.COOKIE_NAME, {
+        httpOnly: true,
+        ...SETTINGS.useHTTP2 && {
+          sameSite: 'None',
+          secure: true,
+        },
+        expires: new Date(Date.now())
+      });
+      return res.status(200).send({message: 'Logout successful'});
+    }
+    catch (err) {
+      console.log(err);
+      return res.status(500).send({message:'Something went wrong'});
+    }
+  };
