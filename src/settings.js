@@ -4,7 +4,7 @@ module.exports= {
     'origin': [
       '*',
       'http://localhost:5173',
-      'https://amazing-medovik-e4b89c.netlify.app/'
+      'https://amazing-medovik-e4b89c.netlify.app'
     ],
     'useHTTP2': false,
     'SMTP_HOST': '',

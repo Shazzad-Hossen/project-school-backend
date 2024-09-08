@@ -1,7 +1,7 @@
 const { auth } = require("../middleware");
 const { create, login, me, updateOwn, logout } = require("./user.entity");
 
-module.exports.user=function(){
+function user(){
     this.route.post('/user',create(this));
     this.route.post('/login',login(this));
     this.route.get('/me',auth, me(this));
@@ -13,3 +13,5 @@ module.exports.user=function(){
 
 
 }
+
+module.exports=user;

@@ -3,6 +3,7 @@ const express= require('express');
 const cors=require('cors');
 const settings = require('./settings');
 const http= require('node:http');
+const path= require('node:path');
 const services= require('./services/index');
 const morgan = require('morgan');
 const crypto = require('./utils/crypto');
@@ -35,6 +36,7 @@ class App {
         this.express.use(form.parse());
        
         this.express.use('/api', this.router);
+        this.express.use(express.static(path.resolve(process.cwd(), 'client')));
         this.server= http.createServer(this.express);
 
         services(this);
@@ -52,6 +54,10 @@ class App {
       }
 
     listen(){
+        this.express.get('*', (req, res) => {
+            res.sendFile(path.resolve(process.cwd(), 'client', 'index.html'));
+          });
+      
 
         this.server.listen(this.config.port,async()=>{
             console.log(`=> Listening on ${this.config.port}`);
