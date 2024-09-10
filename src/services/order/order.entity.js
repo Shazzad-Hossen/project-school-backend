@@ -8,7 +8,7 @@ module.exports.create = ()=>async(req,res)=>{
         const isValid= Object.keys(req.body.length!==0) && Object.keys(req.body).every(key=>createAllowed.has(key));
         if(!isValid) return res.status(400).send({message:'bad request'});
 
-        const isFound= await Order.findOne({tnxId:req.body.tnxId, status:'confirmed'});
+        const isFound= await Order.findOne({tnxId:req.body.tnxId, status:{$in:['confirmed','pending']}});
         if(isFound) return res.status(400).send({message:'This Tnx is has already been used'});
 
         const order= await Order.create({
@@ -51,6 +51,39 @@ module.exports.getAll = () => async (req, res) => {
         if (!orders) return res.status(500).send({ message: 'Something went wrong' });
 
         return res.status(200).send({ message: 'ok', data: orders });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({ message: 'Something went wrong' });
+    }
+};
+
+module.exports.getSingle = () => async (req, res) => {
+    try {
+       if(!req.params.id)  return res.status(400).send({message:'Bad request'});
+       const order = await Order.findOne({_id:req.params.id}).populate('course user');
+       if(!order) return res.status(500).send({message:'Something went wrong.'});
+       return res.status(200).send({data: order});
+
+      
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({ message: 'Something went wrong' });
+    }
+};
+
+
+module.exports.updateStatus = () => async (req, res) => {
+    try {
+        if(!req.body.status || !req.params.id) return res.status(400).send({message:'Bad request'});
+        else if(req.body.status!=='cancelled' && req.user.role!=='admin') return res.status(401).send({message:'Unauthorized'});
+        const order = await Order.findOne({_id: req.params.id});
+        if(!order) return res.status(500).send({message:'Something went wrong.'});
+        order.status=req.body.status;
+        await order.save();
+        await order.populate('user course');
+        return res.status(200).send({data: order});
+
+      
     } catch (error) {
         console.log(error);
         return res.status(500).send({ message: 'Something went wrong' });
