@@ -1,4 +1,5 @@
 const { model, Schema } = require("mongoose");
+const paginate = require('mongoose-paginate-v2');
 
 
 const schema = new Schema({
@@ -14,7 +15,7 @@ const schema = new Schema({
   verified:{type:Boolean, default: false}
  
 }, { timestamps: true });
-
+schema.plugin(paginate);
 schema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.__v;

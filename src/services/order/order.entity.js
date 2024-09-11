@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose');
 const Order =require('./order.schema');
 
 
@@ -82,6 +83,45 @@ module.exports.updateStatus = () => async (req, res) => {
         await order.save();
         await order.populate('user course');
         return res.status(200).send({data: order});
+
+      
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({ message: 'Something went wrong' });
+    }
+};
+
+
+
+module.exports.getEnrolledUsers = () => async (req, res) => {
+    try {
+      if(!req.params.id)  return res.status(400).send({message:'Bad request'});
+      const enrolledUsers= await Order.aggregate([
+        {
+          '$match': {
+            'course':new mongoose.Types.ObjectId(req.params.id), 
+            'status': 'confirmed'
+          }
+        }, {
+          '$lookup': {
+            'from': 'users', 
+            'localField': 'user', 
+            'foreignField': '_id', 
+            'as': 'user'
+          }
+        }, {
+          '$unwind': {
+            'path': '$user'
+          }
+        }, {
+          '$project': {
+            'user': 1, 
+            '_id': 0
+          }
+        }
+      ]);
+
+      return res.status(200).send({data:enrolledUsers});
 
       
     } catch (error) {

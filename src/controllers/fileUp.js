@@ -4,7 +4,7 @@ const path = require('path');
 const { randomBytes } = require('crypto');
 
 const imagesDir = `${path.resolve()}/files`;
-const allowedFileExtensions=['png', 'jpg', 'jpeg', 'svg', 'gif', 'avif', 'webp'];
+const allowedFileExtensions=['png', 'jpg', 'jpeg', 'svg', 'gif', 'avif', 'webp', 'pdf'];
 
 
 module.exports.fileUp = async function (link) {
