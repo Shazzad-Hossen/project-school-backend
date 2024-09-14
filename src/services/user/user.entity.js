@@ -1,5 +1,6 @@
 const createAllowed= new Set(['email','name','username','nid', 'password']);
 const User = require('./user.schema');
+const Order = require('../order/order.schema');
 const SETTINGS =require('../../settings');
 
 module.exports.create = ({crypto})=>async(req,res)=>{
@@ -66,7 +67,7 @@ module.exports.me=({crypto})=>async(req,res)=>{
 
 module.exports.updateOwn=({fileUp,crypto})=>async(req,res)=>{
     try {
-        if(req.params.id!==req.user._id.toString()) return res.status(401).send({message: 'Unauthorized'});
+        if(req.user._id) return res.status(401).send({message: 'Unauthorized'});
         if(req.body.data) req.body=JSON.parse(req.body.data);
         if(req.files.file) req.body.image= await fileUp(req.files.file.path);
         if(req.files.nidFront) {
@@ -123,7 +124,7 @@ module.exports.logout = () => async (req, res) => {
 
   module.exports.getAllUser = () => async (req, res) => {
     try {
-      const users= await User.find().paginate({limit:req?.query?.limit ||10, page:req?.query?.page || 0});
+      const users= await User.find({role:'user'}).paginate({limit:req?.query?.limit ||10, page:req?.query?.page || 0});
       if(!users)  return res.status(500).send({message:'Something went wrong'});
       return res.status(200).send({data:users});
     }
@@ -132,3 +133,87 @@ module.exports.logout = () => async (req, res) => {
       return res.status(500).send({message:'Something went wrong'});
     }
   };
+
+
+  
+  module.exports.deleteOneUser = () => async (req, res) => {
+    try {
+      if(!req.params.id) return res.status(400).send({message:'Bad request'});
+      const isExist = await User.findOne({_id:req.params.id});
+      if(!isExist)  return res.status(400).send({message:'User does not exist'});
+
+      const delete_res = await User.deleteOne({ _id: req.params.id });
+      if (!delete_res.acknowledged) return res.status(500).send({ message: 'Something went wrong' });
+      if(isExist.image){
+        const filePath = path.join(path.resolve(), 'files', isExist.image.slice(4));
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        } else {
+            console.log('Failed to delete Phofile Image');
+        }
+  
+      }
+      if(isExist.nidFront){
+        const filePath = path.join(path.resolve(), 'files', isExist.nidFront.slice(4));
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        } else {
+            console.log('Failed to delete Nid Front Image');
+        }
+  
+      }
+      if(isExist.nidBack){
+        const filePath = path.join(path.resolve(), 'files', isExist.nidBack.slice(4));
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        } else {
+            console.log('Failed to delete Nid Front Image');
+        }
+  
+      }
+      return res.status(200).send({ message: 'Successfully deleted' });
+
+
+
+      }
+    catch (err) {
+      console.log(err);
+      return res.status(500).send({message:'Something went wrong'});
+    }
+  };
+
+
+  module.exports.getSingleUser = () => async (req, res) => {
+    try {
+     if(!req.params.id) return res.status(400).send({message:'Bad request'});
+     const user = await User.findOne({_id: req.params.id});
+     if (!user)  return res.status(404).send({message:'User not found'});
+     const order = await Order.find({user:req.params.id}).populate('course');
+    return res.status(200).send({data:{...JSON.parse(JSON.stringify(user)), orders: order}});
+    }
+    catch (err) {
+      console.log(err);
+      return res.status(500).send({message:'Something went wrong'});
+    }
+  };
+
+
+  
+  module.exports.updateUserStatus = () => async (req, res) => {
+    try {
+    
+     if(!req.params.id || !Object.keys(req.body).includes('verified')) return res.status(400).send({message:'Bad request'});
+     const user = await User.findOne({_id: req.params.id});
+     if (!user)  return res.status(404).send({message:'User not found'});
+    user.verified=req.body.verified;
+    await user.save();
+    return res.status(200).send({data:user});
+    }
+    catch (err) {
+      console.log(err);
+      return res.status(500).send({message:'Something went wrong'});
+    }
+  };
+
+
+  
