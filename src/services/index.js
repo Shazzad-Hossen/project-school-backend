@@ -5,6 +5,7 @@ const blog = require("./blog/blog");
 const certificate = require("./certificate/certificate");
 const course = require("./course/course");
 const demo = require("./demo/demo");
+const gallary = require("./gallary/gallary");
 const order = require("./order/order");
 const team = require("./team/team");
 const user = require("./user/user");
@@ -20,6 +21,8 @@ module.exports= (app) => {
     app.configure(order);
     app.configure(certificate);
     app.configure(team);
+    app.configure(gallary);
+    
     
     
 

@@ -83,7 +83,7 @@ module.exports.editOneTeamMember=({fileUp})=>async(req,res)=>{
         }
         Object.keys(req.body).forEach(key=>member[key]=req.body[key]);
         await member.save();
-        return res.status(200).send({message:'Successfully updated'});
+        return res.status(200).send({message:'Successfully updated', data:member});
             
         
     } catch (error) {

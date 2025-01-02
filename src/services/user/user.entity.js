@@ -67,7 +67,8 @@ module.exports.me=({crypto})=>async(req,res)=>{
 
 module.exports.updateOwn=({fileUp,crypto})=>async(req,res)=>{
     try {
-        if(req.user._id) return res.status(401).send({message: 'Unauthorized'});
+      
+        if(!req.user._id) return res.status(401).send({message: 'Unauthorized'});
         if(req.body.data) req.body=JSON.parse(req.body.data);
         if(req.files.file) req.body.image= await fileUp(req.files.file.path);
         if(req.files.nidFront) {

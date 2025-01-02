@@ -40,13 +40,45 @@ module.exports.getAllCertificate = () => async (req, res) => {
 
 
 
-module.exports.getSingleCertificate = () => async (req, res) => {
+module.exports.getCertificateByNid = () => async (req, res) => {
     try {
-        if (!req.params.cId) return res.status(400).send({ message: 'Bad request' });
+        if (!req.params.nid) return res.status(400).send({ message: 'Bad request' });
 
-        const certificate = await Certificate.findOne({ cId: req.params.cId }).populate('user course')
-        if (!certificate) return res.status(500).send({ message: 'Something went wrong' });
-        return res.status(200).send({ data: certificate });
+        const certificates = await Certificate.aggregate([
+            {
+              '$lookup': {
+                'from': 'users', 
+                'localField': 'user', 
+                'foreignField': '_id', 
+                'as': 'user'
+              }
+            }, {
+              '$unwind': {
+                'path': '$user'
+              }
+            }, {
+              '$lookup': {
+                'from': 'courses', 
+                'localField': 'course', 
+                'foreignField': '_id', 
+                'as': 'course'
+              }
+            }, {
+              '$unwind': {
+                'path': '$course'
+              }
+            }, {
+              '$addFields': {
+                'nid': '$user.nid'
+              }
+            }, {
+              '$match': {
+                'nid': req.params.nid
+              }
+            }
+          ])
+        if (!certificates) return res.status(500).send({ message: 'Something went wrong' });
+        return res.status(200).send({ data: certificates });
 
 
     } catch (error) {
