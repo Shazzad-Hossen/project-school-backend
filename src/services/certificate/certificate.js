@@ -8,7 +8,7 @@ function certificate (){
     this.route.post('/certificate', auth, checkRole(['admin']), uploadCertificate(this));
     this.route.get('/certificate', auth, checkRole(['admin']), getAllCertificate(this));
     this.route.get('/certificate/:nid', getCertificateByNid(this));
-    this.route.delete('/certificate/:id', deleteCertificate(this));
+    this.route.delete('/certificate/:id',auth, checkRole(['admin']), deleteCertificate(this));
     
     
 
