@@ -4,7 +4,7 @@ const { uploadGallaryImage, getAllGallaryImages, deleteOneGallaryImage } = requi
 
 function gallary (){
     this.route.post('/gallary', auth, checkRole(['admin']), uploadGallaryImage(this));
-    this.route.get('/gallary', auth, getAllGallaryImages(this));
+    this.route.get('/gallary', getAllGallaryImages(this));
     this.route.delete('/gallary/:id', auth, checkRole(['admin']), deleteOneGallaryImage(this));
 
 

@@ -4,7 +4,7 @@ const { create, getAll, updateStatus, getSingle, getEnrolledUsers, getEnrolledCo
 
 
 function order (){
-    this.route.post('/order', auth, checkRole(['user','admin']), create(this));
+    this.route.post('/order', auth, create(this));
     this.route.get('/order',auth, checkRole(['admin']), getAll(this));
     this.route.get('/user-orders',auth, getEnrolledCourses(this));
     this.route.get('/check-enrollmenmts/:id',auth, checkEnrollments(this));
