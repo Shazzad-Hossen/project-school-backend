@@ -1,5 +1,6 @@
 const { default: mongoose } = require('mongoose');
 const Order =require('./order.schema');
+const Certificate =require('../certificate/certificate.schema');
 
 
 const createAllowed= new Set(['course', 'phone', 'tnxId']);
@@ -129,3 +130,41 @@ module.exports.getEnrolledUsers = () => async (req, res) => {
         return res.status(500).send({ message: 'Something went wrong' });
     }
 };
+
+module.exports.getEnrolledCourses = () => async (req, res) => {
+  try {
+    let orders = await Order.paginate({user: req.user._id},{ populate: { path: 'course' },
+      limit: req?.query?.limit || 10,
+      page: req?.query?.page || 1,
+      sort: { createdAt: -1 }
+      });
+    if(!orders) return res.status(500).send({message:'Something went wrong.'});
+    orders=JSON.parse(JSON.stringify(orders));
+    for(let i=0; i<orders?.docs?.length; i++){
+       const certificate= await Certificate.findOne({course:orders?.docs[i]?.course._id.toString(), user:req.user._id.toString()});
+       if(certificate) orders.docs[i].certificate=certificate;
+    }
+ 
+    return res.status(200).send({ data: orders });
+    
+    
+  } catch (error) {
+      console.log(error);
+      return res.status(500).send({ message: 'Something went wrong' });
+    
+  }
+}
+
+module.exports.checkEnrollments=()=>async(req,res)=>{
+  try {
+    if(!req.params.id) return res.status(400).send({message:'Bad request'});
+    const isEnrolled= await Order.findOne({course:req.params.id.toString(), user:req.user._id.toString(), status:'confirmed'});
+    if(isEnrolled) return res.status(200).send({message:'Enrolled'});
+    else return res.status(404).send({message:'Not Enrolled'});
+    
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ message: 'Something went wrong' });
+    
+  }
+}

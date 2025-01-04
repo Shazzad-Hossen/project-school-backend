@@ -31,20 +31,10 @@ module.exports.login=({crypto})=>async(req,res)=>{
         
         const password = crypto.decrypt(user.password);
         if(password!==req.body.password) return res.status(400).send({message:'Invalid password'});
-        const token = crypto.encrypt({id: user._id});
-        //setup cookie here
-        res.cookie(SETTINGS.COOKIE_NAME, token, {
-            httpOnly: true,
-            ...SETTINGS.useHTTP2 && {
-              sameSite: 'None',
-              secure: true,
-            },
-            ...!req.body.rememberMe && { expires: new Date(Date.now() + 172800000/*2 days*/) },
-          });
+        
+        const token = crypto.encrypt({ _id: user._id, email: user.email });
 
-
-        return res.status(200).send({message:"Sign in successful", data:user});
-
+        return res.status(200).send({message:"Sign in successful",Authorization: 'BEARER ' + token, data:user});
         
     } catch (error) {
         console.log(error);
