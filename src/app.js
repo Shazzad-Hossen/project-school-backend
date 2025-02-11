@@ -25,16 +25,10 @@ class App {
     }
 
     init(){
-      
-      this.express.use((req, res, next) => {
-        console.log('Origin:', req.get('Origin') || 'No Origin');
-        console.log('Referer:', req.get('Referer') || 'No Referer');
-        next();
-    });
-    
       this.express.use(
         cors({
-          origin: this.config.origin,
+          // origin: this.config.origin,
+          origin: true,
           credentials: true
         }));
         this.express.use(morgan('common'));
