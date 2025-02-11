@@ -4,6 +4,7 @@ module.exports= {
     'origin': [
       '*',
       'http://localhost:5173',
+      'https://maa-training.web.app'
     ],
     'useHTTP2': false,
     'SMTP_HOST': '',

@@ -7,6 +7,7 @@ const schema = new Schema({
   email: { type: String, required: true },
   phone: { type: String, required: true },
   message: { type: String, required: true},
+  seen: { type: Boolean, default: false },
 }, { timestamps: true });
 schema.plugin(paginate);
 schema.methods.toJSON = function () {
