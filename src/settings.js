@@ -5,7 +5,7 @@ module.exports= {
       '*',
       'http://localhost:5173',
       'https://maa-training.web.app/',
-      'http://maa-training.web.app/'
+      'https://maa-training.firebaseapp.com/'
     ],
     'useHTTP2': false,
     'SMTP_HOST': '',
