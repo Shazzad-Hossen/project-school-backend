@@ -25,12 +25,12 @@ class App {
     }
 
     init(){
-        this.express.use(morgan('common')); 
-        this.express.use(
-            cors({
-              origin: this.config.origin,
-              credentials: true
-            }));
+      this.express.use(
+        cors({
+          origin: this.config.origin,
+          credentials: true
+        }));
+        this.express.use(morgan('common'));
         this.express.use(express.json());
         this.express.use(cookieParser());
         this.express.use(form.parse());
