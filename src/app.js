@@ -25,7 +25,7 @@ class App {
     }
 
     init(){
-      app.use((req, res, next) => {
+      this.express.use((req, res, next) => {
         console.log('Origin:', req.get('Origin') || 'No Origin');
         console.log('Referer:', req.get('Referer') || 'No Referer');
         next();
