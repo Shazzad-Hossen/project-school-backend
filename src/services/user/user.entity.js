@@ -8,7 +8,7 @@ module.exports.create = ({crypto})=>async(req,res)=>{
     const isValid= Object.keys(req.body).every(key=>createAllowed.has(key));
     req.body.password= crypto.encrypt(req.body.password)
     if(!isValid) return res.status(400).send({message:'Bad request'});
-    const isFound = await User.findOne({email:req.body.email})
+    const isFound = await User.findOne({email:req.body.email});
     if(isFound) return res.status(409).send({message:'User already exist with this email address'});
     const user = await User.create(req.body);
     if(!user) return res.status(500).send({message:'Something went wrong'});
